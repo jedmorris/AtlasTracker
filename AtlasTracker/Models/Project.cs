@@ -26,21 +26,19 @@ public class Project
     [DisplayName("Project End Date")]
     [DataType(DataType.Date)]
     public DateTimeOffset EndDate { get; set; }
-    
+
     public int ProjectPriorityId { get; set; }
 
     [NotMapped]
     [DataType(DataType.Upload)]
     public IFormFile? ImageFormFile { get; set; }
 
-    [DisplayName("File Name")]
-    public string? ImageFileName { get; set; }
+    [DisplayName("File Name")] public string? ImageFileName { get; set; }
 
     public byte? ImageFileData { get; set; }
 
-    [DisplayName("File Extension")]
-    public string? ImageContentType { get; set; }
-    
+    [DisplayName("File Extension")] public string? ImageContentType { get; set; }
+
     public bool Archived { get; set; }
 
 
