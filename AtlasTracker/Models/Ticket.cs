@@ -54,10 +54,10 @@ public class Ticket
     public virtual BTUser? OwnerUser { get; set; }
     public virtual BTUser? DeveloperUser { get; set; }
 
-    public virtual ICollection<TicketComment>? Comments { get; set; } = new HashSet<TicketComment>();
-    public virtual ICollection<TicketAttachment>? Attachments { get; set; } = new HashSet<TicketAttachment>();
-    public virtual ICollection<TicketHistory>? History { get; set; } = new HashSet<TicketHistory>();
-    public virtual ICollection<Notification>? Notification { get; set; } = new HashSet<Notification>();
+    public virtual ICollection<TicketComment> Comments { get; set; } = new HashSet<TicketComment>();
+    public virtual ICollection<TicketAttachment> Attachments { get; set; } = new HashSet<TicketAttachment>();
+    public virtual ICollection<TicketHistory> History { get; set; } = new HashSet<TicketHistory>();
+    public virtual ICollection<Notification> Notification { get; set; } = new HashSet<Notification>();
     
     
 }
