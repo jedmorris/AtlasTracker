@@ -1,6 +1,6 @@
 namespace AtlasTracker.Models;
 
-public class ProjectStatus
+public class ProjectPriority
 {
     
 }
