@@ -8,7 +8,9 @@ public class Project
 {
     public int Id { get; set; }
 
-    [Required] [DisplayName("Project Name")] public string? Name { get; set; }
+    public int CompanyId { get; set; }
+    
+    [Required] [StringLength(240, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)] [DisplayName("Project Name")] public string? Name { get; set; }
 
     [DisplayName("Project Description")] public string? Description { get; set; }
 
@@ -29,8 +31,6 @@ public class Project
     [DisplayName("File Extension")] public string? ImageContentType { get; set; }
 
     public bool Archived { get; set; }
-
-    public int CompanyId { get; set; }
 
     // Navigation Properties
     public virtual Company? Company { get; set; }
