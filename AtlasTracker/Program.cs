@@ -26,6 +26,9 @@ builder.Services.AddMvc();
 
 var app = builder.Build();
 
+var scope = app.Services.CreateScope();
+await DataUtility.ManageDataAsync(scope.ServiceProvider);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
