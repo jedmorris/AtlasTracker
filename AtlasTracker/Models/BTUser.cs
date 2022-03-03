@@ -8,14 +8,12 @@ namespace AtlasTracker.Models;
 public class BTUser : IdentityUser
 {
     [Required]
-    [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.",
-        MinimumLength = 2)]
+    [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
     [DisplayName("First Name")]
     public string? FirstName { get; set; }
 
     [Required]
-    [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.",
-        MinimumLength = 2)]
+    [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
     [DisplayName("Last Name")]
     public string? LastName { get; set; }
 

@@ -44,7 +44,7 @@ namespace AtlasTracker.Controllers
                 return NotFound();
             }
 
-            return View(company);
+            return View();
         }
 
         // GET: Companies/Create
