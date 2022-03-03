@@ -6,6 +6,7 @@ public interface IBTCompanyInfoService
 {
     public Task<Company> GetCompanyInfoByIdAsync(int? companyId);
     
+         
     
     
     
