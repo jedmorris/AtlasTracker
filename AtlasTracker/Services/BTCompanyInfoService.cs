@@ -29,6 +29,7 @@ public class BTCompanyInfoService : IBTCompanyInfoService
                     .FirstOrDefaultAsync(c => c.Id == companyId);
             }
             return company!;
+            
         }
         catch (Exception e)
         {
