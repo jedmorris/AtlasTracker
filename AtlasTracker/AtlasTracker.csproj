@@ -27,4 +27,8 @@
       <Content Remove="Views\Shared\_LayoutOLD.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Extensions" />
+    </ItemGroup>
+
 </Project>
