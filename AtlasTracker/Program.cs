@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AtlasTracker.Data;
 using AtlasTracker.Models;
 using AtlasTracker.Services;
+using AtlasTracker.Services.Factories;
 using AtlasTracker.Services.Interfaces;
 using Instructor_AtlasTracker.Data;
 
@@ -19,8 +20,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
+
 
 // Custom Services
 builder.Services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
