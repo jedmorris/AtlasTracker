@@ -14,7 +14,7 @@ public class BTProjectService : IBTProjectService
         _context = context;
     }
 
-    public Task AddNewProjectAsync(Project project)
+    public async Task AddNewProjectAsync(Project project)
     {
         try
         {
@@ -141,7 +141,7 @@ public class BTProjectService : IBTProjectService
         throw new NotImplementedException();
     }
 
-    public Task UpdateProjectAsync(Project project)
+    public async Task UpdateProjectAsync(Project project)
     {
         _context.Add(project);
         await _context.SaveChangesAsync();

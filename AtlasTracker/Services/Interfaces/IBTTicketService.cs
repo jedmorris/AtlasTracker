@@ -1,3 +1,5 @@
+using AtlasTracker.Models;
+
 namespace AtlasTracker.Services.Interfaces;
 
 public interface IBTTicketService
