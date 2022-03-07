@@ -46,7 +46,7 @@ namespace AtlasTracker.Controllers
             // BTUser btUser = _context.Users.Find(userId);
             int companyId = User.Identity.GetCompanyId();
 
-            Project project = await _projectService.GetProjectByIdAsync(id.Value, btUser.CompanyId);
+            Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
             
             if (project == null)
             {
