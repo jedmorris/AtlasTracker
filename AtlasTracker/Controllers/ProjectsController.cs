@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AtlasTracker.Data;
+using AtlasTracker.Extensions;
 using AtlasTracker.Models;
 using AtlasTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -41,8 +42,9 @@ namespace AtlasTracker.Controllers
                 return NotFound();
             }
 
-            string userId = _userManager.GetUserId(User);
-            BTUser btUser = _context.Users.Find(userId);
+            // string userId = _userManager.GetUserId(User);
+            // BTUser btUser = _context.Users.Find(userId);
+            int companyId = User.Identity.GetCompanyId();
 
             Project project = await _projectService.GetProjectByIdAsync(id.Value, btUser.CompanyId);
             
