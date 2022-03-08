@@ -9,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using AtlasTracker.Data;
 using AtlasTracker.Extensions;
 using AtlasTracker.Models;
+using AtlasTracker.Models.Enums;
+using AtlasTracker.Models.ViewModels;
 using AtlasTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace AtlasTracker.Controllers
@@ -19,14 +22,54 @@ namespace AtlasTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBTProjectService _projectService;
         private readonly UserManager<BTUser> _userManager;
-
-        public ProjectsController(ApplicationDbContext context, IBTProjectService projectService, UserManager<BTUser> userManager)
+        private readonly IBTRolesService _rolesService;
+        private readonly IBTLookupService _lookupService;
+        private readonly IBTCompanyInfoService _companyInfoService;
+        public ProjectsController(ApplicationDbContext context, IBTProjectService projectService, UserManager<BTUser> userManager, IBTRolesService rolesService, IBTLookupService lookupService, IBTCompanyInfoService companyInfoService)
         {
             _context = context;
             _projectService = projectService;
             _userManager = userManager;
+            _rolesService = rolesService;
+            _lookupService = lookupService;
+            _companyInfoService = companyInfoService;
         }
 
+        // MyProjects
+        public async Task<IActionResult> MyProjects()
+        {
+            string userId = _userManager.GetUserId(User);
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+
+            return View(projects);
+        }
+        // All Projects
+        public async Task<IActionResult> AllProjects()
+        {
+            List<Project> projects;
+            int companyId = User.Identity.GetCompanyId();
+            if (User.IsInRole(nameof(BTRole.Admin)) || User.IsInRole(nameof(BTRole.ProjectManager)))
+            {
+                projects = await _companyInfoService.GetAllProjectsAsync(companyId);
+            }
+            else
+            {
+                projects = await _projectService.GetAllProjectsByCompany(companyId);
+            }
+
+            return View(projects);
+        }
+        // ArchivedProjects
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            
+        }
+        // UnassignedProjects
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            
+        }
+        
         // GET: Projects
         public async Task<IActionResult> Index()
         {
@@ -57,11 +100,18 @@ namespace AtlasTracker.Controllers
         }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
-            return View();
+
+            int companyId = User.Identity.GetCompanyId();
+
+            AddProjectWithPMViewModel model = new();
+
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id", "FullName");
+            model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+            
+            return View(model);
         }
 
         // POST: Projects/Create

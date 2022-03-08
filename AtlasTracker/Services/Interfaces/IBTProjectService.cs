@@ -37,7 +37,7 @@ public interface IBTProjectService
 
         public Task<bool> IsAssignedProjectManager(string userId, int projectId);
         
-        public Task<bool> IsUserOnProject(string userId, int projectId);
+        public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
 
         public Task<int> LookupProjectPriorityId(string priorityName);
 

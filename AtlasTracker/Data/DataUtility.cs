@@ -658,7 +658,7 @@ namespace Instructor_AtlasTracker.Data
 
             try
             {
-                IList<Project> projects = new List<Project>() {
+                IList<Project?> projects = new List<Project?>() {
                      new Project()
                      {
                          CompanyId = company1Id,
