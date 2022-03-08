@@ -123,10 +123,19 @@ namespace AtlasTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CompanyId,Name,Description,CreatedDate,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageFileData,ImageContentType,Archived")] Project project)
+        public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
+            int companyId = User.Identity.GetCompanyId();
             if (ModelState.IsValid)
             {
+                if (model.Project?.ImageFormFile != null)
+                {
+                    model.Project.ImageFileData
+
+                }
+                
+                
+                
                 await _projectService.AddNewProjectAsync(project);
                 return RedirectToAction(nameof(Index));
             }
