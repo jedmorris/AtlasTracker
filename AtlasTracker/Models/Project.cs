@@ -26,7 +26,7 @@ public class Project
 
     [DisplayName("File Name")] public string? ImageFileName { get; set; }
 
-    public byte? ImageFileData { get; set; }
+    public byte[] ImageFileData { get; set; }
 
     [DisplayName("File Extension")] public string? ImageContentType { get; set; }
 
