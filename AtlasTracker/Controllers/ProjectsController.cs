@@ -14,8 +14,10 @@ using AtlasTracker.Models.ViewModels;
 using AtlasTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Index = System.Index;
+using Project = AtlasTracker.Models.Project;
 
 namespace AtlasTracker.Controllers
 {
@@ -43,11 +45,23 @@ namespace AtlasTracker.Controllers
             _fileService = fileService;
         }
 
+
+        // GET: Projects
+        public async Task<IActionResult> Index()
+        {
+            int companyId = User.Identity.GetCompanyId();
+            var applicationDbContext = await _context.Projects
+                .Include(p => p.ProjectPriority)
+                .Where(p => p.CompanyId == companyId)
+                .ToList();
+        }
+
         // MyProjects
         public async Task<IActionResult> MyProjects()
         {
+            int companyId = User.Identity!.GetCompanyId();
             string userId = _userManager.GetUserId(User);
-            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+            var projects = await _projectService.GetUserProjectsAsync(userId);
 
             return View(projects);
         }
@@ -55,16 +69,8 @@ namespace AtlasTracker.Controllers
         // All Projects
         public async Task<IActionResult> AllProjects()
         {
-            List<Project> projects;
-            int companyId = User.Identity.GetCompanyId();
-            if (User.IsInRole(nameof(BTRole.Admin)) || User.IsInRole(nameof(BTRole.ProjectManager)))
-            {
-                projects = await _companyInfoService.GetAllProjectsAsync(companyId);
-            }
-            else
-            {
-                projects = await _projectService.GetAllProjectsByCompany(companyId);
-            }
+            int companyId = User.Identity!.GetCompanyId();
+            var projects = await _projectService.GetAllProjectsByCompany(companyId);
 
             return View(projects);
         }
@@ -72,19 +78,53 @@ namespace AtlasTracker.Controllers
         // ArchivedProjects
         public async Task<IActionResult> ArchivedProjects()
         {
-        }
+            int companyId = User.Identity!.GetCompanyId();
+            var projects = await _projectService.GetAllProjectsByCompany(companyId);
 
+            return View(projects);
+        }
 
         // UnassignedProjects
         public async Task<IActionResult> UnassignedProjects()
         {
+            int companyId = User.Identity!.GetCompanyId();
+            var projects = await _projectService.GetUn(companyId);
+        
+            return View();
         }
 
-        // GET: Projects
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignPM(int? projectId)
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
-            return View(await applicationDbContext.ToListAsync());
+            if (projectId == null)
+            {
+                return NotFound();
+            }
+            
+            
+            int companyId = User.Identity!.GetCompanyId();
+
+            AssignPMViewModel model = new();
+
+            model.Project = await _projectService.GetProjectByIdAsync(projectId.Value, companyId);
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id", "FullName");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel model)
+        {
+            // Add PM if one was chosen
+            if (!string.IsNullOrEmpty(model.PMID))
+            {
+                await _projectService.AddProjectManagerAsync(model.PMID, model.Project!.Id);
+                return RedirectToAction(nameof(AllProjects));
+            }
+
+            return RedirectToAction(nameof(AssignPM), new {ProjectId = model.Project!.Id});
         }
 
         // GET: Projects/Details/5
@@ -152,7 +192,7 @@ namespace AtlasTracker.Controllers
                     model.Project.EndDate = DateTime.SpecifyKind(model.Project.EndDate.DateTime, DateTimeKind.Utc);
 
                     await _projectService.AddNewProjectAsync(model.Project);
-                    
+
                     // Add PM if one was chosen
                     if (!string.IsNullOrEmpty(model.PMID))
                     {
@@ -167,7 +207,9 @@ namespace AtlasTracker.Controllers
                 }
             }
 
-            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id", "FullName");
+            model.PMList =
+                new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id",
+                    "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
             return View(model.Project);
         }
@@ -180,16 +222,37 @@ namespace AtlasTracker.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            int companyId = User.Identity!.GetCompanyId();
+
+            // Add ViewModel instance "AddProjectWithPMViewModel"
+            AddProjectWithPMViewModel model = new();
+
+            model.Project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
+            if (model.Project == null)
             {
                 return NotFound();
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] =
-                new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
-            return View(project);
+            BTUser projectManager = await _projectService.GetProjectManagerAsync(model.Project.Id);
+
+            if (projectManager != null)
+            {
+                model.PMList =
+                    new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId),
+                        "Id", "FullName", projectManager!.Id);
+            }
+            else
+            {
+                model.PMList =
+                    new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId),
+                        "Id", "FullName");
+            }
+
+            // Load SelectLists with data (ie PMList & PriorityList)
+            model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+
+            return View(model);
         }
 
         // POST: Projects/Edit/5
@@ -197,55 +260,66 @@ namespace AtlasTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,
-            [Bind(
-                "Id,CompanyId,Name,Description,CreatedDate,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageFileData,ImageContentType,Archived")]
-            Project project)
+        public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
-            if (id != project.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
+            if (Model != null)
             {
                 try
                 {
-                    await _projectService.UpdateProjectAsync(project);
+                    if (model.Project?.ImageFormFile != null)
+                    {
+                        model.Project.ImageFileData =
+                            await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
+                        model.Project.ImageContentType = model.Project.ImageFormFile.ContentType;
+                    }
+
+                    // Format Dates (CreatedResult, Start & End)
+                    model.Project.CreatedDate =
+                        DateTime.SpecifyKind(model.Project.CreatedDate.DateTime, DateTimeKind.Utc);
+                    model.Project.StartDate = DateTime.SpecifyKind(model.Project.StartDate.DateTime, DateTimeKind.Utc);
+                    model.Project.EndDate = DateTime.SpecifyKind(model.Project.EndDate.DateTime, DateTimeKind.Utc);
+
+                    await _projectService.AddNewProjectAsync(model.Project!);
+
+                    // Add PM if one was chosen
+                    if (!string.IsNullOrEmpty(model.PMID))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PMID, model.Project.Id);
+                    }
+
+                    return RedirectToAction(("Index"));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!await ProjectExists(model.Project!.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
                     }
                 }
-
-                return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] =
-                new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
-            return View(project);
+            model.PMList =
+                new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id",
+                    "FullName");
+            model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+            return View(model.Project);
         }
 
         // GET: Projects/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int companyId = User.Identity.GetCompanyId();
+            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
             if (project == null)
             {
                 return NotFound();
@@ -255,19 +329,27 @@ namespace AtlasTracker.Controllers
         }
 
         // POST: Projects/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
+            int companyId = User.Identity.GetCompanyId();
+            var project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            await _projectService.ArchiveProjectAsync(project);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExists(int id)
         {
-            return _context.Projects.Any(e => e.Id == id);
+            int companyId = User.Identity.GetCompanyId();
+            return (await _projectService.GetAllProjectsByCompany(companyId)).Any(p => p.Id == id);
+        }
+
+        public IActionResult Restore()
+        {
+            throw new NotImplementedException();
         }
     }
 }

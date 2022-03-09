@@ -1,8 +1,10 @@
 @model IEnumerable<AtlasTracker.Models.Project>
+@using AtlasTracker.Services.Interfaces
+
+@inject IBTProjectService ProjectService
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Index</h1>
@@ -46,6 +48,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ProjectPriority)
             </th>
+            <th>
+                Project Manager
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -68,13 +73,7 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageContentType)
+                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Archived)
@@ -86,9 +85,12 @@
                 @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @((await ProjectService.GetProjectManagerAsync(item.Id))!.FullName) 
+            </td>
+            <td>
+                <a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a class="btn btn-sm btn-outline-dark" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a class="btn btn-sm btn-outline-danger"  asp-action="Archive" asp-route-id="@item.Id">Archive</a>
             </td>
         </tr>
 }

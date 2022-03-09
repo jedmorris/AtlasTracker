@@ -1,6 +1,7 @@
 
 using AtlasTracker.Data;
 using AtlasTracker.Models;
+using AtlasTracker.Models.Enums;
 using AtlasTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -133,6 +134,16 @@ public class BTProjectService : IBTProjectService
             }
         }
 
+        public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Get All Project Members Except Project Manager
@@ -140,9 +151,9 @@ public class BTProjectService : IBTProjectService
         {
             try
             {
-                List<BTUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.Developer.ToString());
-                List<BTUser> submitters = await GetProjectMembersByRoleAsync(projectId, Roles.Submitter.ToString());
-                List<BTUser> admins = await GetProjectMembersByRoleAsync(projectId, Roles.Admin.ToString());
+                List<BTUser> developers = await GetProjectMembersByRoleAsync(projectId, BTRole.Developer.ToString());
+                List<BTUser> submitters = await GetProjectMembersByRoleAsync(projectId, BTRole.Submitter.ToString());
+                List<BTUser> admins = await GetProjectMembersByRoleAsync(projectId, BTRole.Admin.ToString());
 
                 List<BTUser> teamMembers = developers.Concat(submitters).Concat(admins).ToList();
 
@@ -153,6 +164,11 @@ public class BTProjectService : IBTProjectService
 
                 throw;
             }
+        }
+
+        public async Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -315,7 +331,7 @@ public class BTProjectService : IBTProjectService
 
                 foreach (BTUser member in project?.Members)
                 {
-                    if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                    if (await _rolesService.IsUserInRoleAsync(member, BTRole.ProjectManager.ToString()))
                     {
                         return member;
                     }
@@ -386,7 +402,7 @@ public class BTProjectService : IBTProjectService
 
                 foreach (Project project in projects)
                 {
-                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0)
+                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(BTRole.ProjectManager))).Count == 0)
                     {
                         result.Add(project);
                     }
@@ -439,6 +455,11 @@ public class BTProjectService : IBTProjectService
                 Console.WriteLine($"*** ERROR *** - Error Getting user projects list.  --> {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task<bool> IsAssignedProjectManager(string userId, int projectId)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -544,7 +565,7 @@ public class BTProjectService : IBTProjectService
                                                 .FirstOrDefaultAsync(p => p.Id == projectId);
                 foreach (BTUser member in project?.Members)
                 {
-                    if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                    if (await _rolesService.IsUserInRoleAsync(member, BTRole.ProjectManager.ToString()))
                     {
                         await RemoveUserFromProjectAsync(member.Id, projectId);
                     }
