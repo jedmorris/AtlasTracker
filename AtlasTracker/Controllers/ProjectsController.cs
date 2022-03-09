@@ -11,12 +11,14 @@ using AtlasTracker.Extensions;
 using AtlasTracker.Models;
 using AtlasTracker.Models.Enums;
 using AtlasTracker.Models.ViewModels;
+using AtlasTracker.Services;
 using AtlasTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Index = System.Index;
+using ModelExtensions = Microsoft.CodeAnalysis.ModelExtensions;
 using Project = AtlasTracker.Models.Project;
 
 namespace AtlasTracker.Controllers
@@ -36,7 +38,7 @@ namespace AtlasTracker.Controllers
             UserManager<BTUser> userManager, IBTRolesService rolesService, IBTLookupService lookupService,
             IBTCompanyInfoService companyInfoService, IBTFileService fileService)
         {
-            _context = context;
+            // _context = context;
             _projectService = projectService;
             _userManager = userManager;
             _rolesService = rolesService;
@@ -88,7 +90,7 @@ namespace AtlasTracker.Controllers
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity!.GetCompanyId();
-            var projects = await _projectService.GetUn(companyId);
+            var projects = await _projectService.GetAllProjectsByCompany(companyId);
         
             return View();
         }
@@ -126,6 +128,62 @@ namespace AtlasTracker.Controllers
 
             return RedirectToAction(nameof(AssignPM), new {ProjectId = model.Project!.Id});
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> AssignMembers(int? projectId)
+        {
+            if (projectId == null)
+            {
+                return NotFound();
+            }
+            
+            ProjectMembersViewModel model = new();
+
+            int companyId = User.Identity.GetCompanyId();
+            model.Project = await _projectService.GetProjectByIdAsync(projectId.Value, companyId);
+
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRole.Developer), companyId);
+            List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(BTRole.Submitter), companyId);
+
+            List<BTUser> teamMembers = developers.Concat(submitters).ToList();
+
+            List<string> projectMembers = model.Project.Members.Select(p => p.Id).ToList();
+            
+            model.UsersList = new MultiSelectList(teamMembers, "Id", "FullName", projectMembers);
+
+            
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if (model.SelectedUsers != null)
+            {
+                List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id))
+                    .Select(m => m.Id).ToList();
+
+                // Remove Current Members
+                foreach (string member in memberIds)
+                {
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
+                } 
+                
+                // Add Selected Members
+                foreach (string member in memberIds)
+                {
+                    await _projectService.AddUserToProjectAsync(member, model.Project.Id);
+                }
+                
+                // goto project details
+                return RedirectToAction("Details", "Projects", new {id = model.Project.Id});
+            }
+        }
+
+
+
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -328,6 +386,25 @@ namespace AtlasTracker.Controllers
             return View(project);
         }
 
+        // GET: Projects/Restore/5
+        public IActionResult Restore()
+        {
+            throw new NotImplementedException();
+        }
+        
+        // POST: Projects/Restore/5
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            int companyId = User.Identity.GetCompanyId();
+            var project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            await _projectService.RestoreProjectAsync(project);
+
+            return RedirectToAction(nameof(Index));
+        }
+        
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
@@ -347,9 +424,5 @@ namespace AtlasTracker.Controllers
             return (await _projectService.GetAllProjectsByCompany(companyId)).Any(p => p.Id == id);
         }
 
-        public IActionResult Restore()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
