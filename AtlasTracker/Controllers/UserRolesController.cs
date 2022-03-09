@@ -62,7 +62,7 @@ public class UserRolesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
     {
-        return View();
+        return RedirectToAction(nameof(ManageUserRoles));
     }
 
 
