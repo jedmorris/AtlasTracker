@@ -224,7 +224,7 @@ namespace AtlasTracker.Controllers
                     "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
 
-            return View(model);
+            return View(model.Project);
         }
 
         // POST: Projects/Create
@@ -365,12 +365,14 @@ namespace AtlasTracker.Controllers
                 }
             }
 
+            int companyId = User.Identity.GetCompanyId();
+            
             model.PMList =
                 new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id",
                     "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
             
-            return View(model.Project);
+            return View(model);
         }
 
         // GET: Projects/Delete/5
