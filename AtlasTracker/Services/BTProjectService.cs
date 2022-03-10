@@ -1,11 +1,11 @@
-
 using AtlasTracker.Data;
 using AtlasTracker.Models;
 using AtlasTracker.Models.Enums;
 using AtlasTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-public class BTProjectService : IBTProjectService
+
+    public class BTProjectService : IBTProjectService
     {
         #region Properties
         private readonly ApplicationDbContext _context;
@@ -134,16 +134,6 @@ public class BTProjectService : IBTProjectService
             }
         }
 
-        public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Get All Project Members Except Project Manager
@@ -164,11 +154,6 @@ public class BTProjectService : IBTProjectService
 
                 throw;
             }
-        }
-
-        public async Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
@@ -455,11 +440,6 @@ public class BTProjectService : IBTProjectService
                 Console.WriteLine($"*** ERROR *** - Error Getting user projects list.  --> {ex.Message}");
                 throw;
             }
-        }
-
-        public async Task<bool> IsAssignedProjectManager(string userId, int projectId)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

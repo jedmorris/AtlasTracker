@@ -84,7 +84,7 @@ public class UserRolesController : Controller
                 await _rolesService.AddUserToRoleAsync(btUser!, userRole);
             }
         }
-
+        // Navigate back to the view
         return RedirectToAction(nameof(ManageUserRoles));
     }
 }

@@ -25,7 +25,7 @@ namespace AtlasTracker.Controllers
 {
     public class ProjectsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        // private readonly ApplicationDbContext _context;
         private readonly IBTProjectService _projectService;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTRolesService _rolesService;
@@ -52,10 +52,14 @@ namespace AtlasTracker.Controllers
         public async Task<IActionResult> Index()
         {
             int companyId = User.Identity.GetCompanyId();
-            var applicationDbContext = await _context.Projects
-                .Include(p => p.ProjectPriority)
-                .Where(p => p.CompanyId == companyId)
-                .ToList();
+            var applicationDbContext = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+                
+                // await _context.Projects
+                // .Include(p => p.ProjectPriority)
+                // .Where(p => p.CompanyId == companyId)
+                // .ToList();
+        
+            return View();
         }
 
         // MyProjects
@@ -72,7 +76,7 @@ namespace AtlasTracker.Controllers
         public async Task<IActionResult> AllProjects()
         {
             int companyId = User.Identity!.GetCompanyId();
-            var projects = await _projectService.GetAllProjectsByCompany(companyId);
+            var projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
 
             return View(projects);
         }
@@ -81,7 +85,7 @@ namespace AtlasTracker.Controllers
         public async Task<IActionResult> ArchivedProjects()
         {
             int companyId = User.Identity!.GetCompanyId();
-            var projects = await _projectService.GetAllProjectsByCompany(companyId);
+            var projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
 
             return View(projects);
         }
@@ -90,7 +94,7 @@ namespace AtlasTracker.Controllers
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity!.GetCompanyId();
-            var projects = await _projectService.GetAllProjectsByCompany(companyId);
+            var projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
         
             return View();
         }
@@ -177,9 +181,9 @@ namespace AtlasTracker.Controllers
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
                 
-                // goto project details
-                return RedirectToAction("Details", "Projects", new {id = model.Project.Id});
             }
+                // goto project details
+                return RedirectToAction("Details", "Projects", new {id = model.Project?.Id});
         }
 
 
@@ -269,6 +273,7 @@ namespace AtlasTracker.Controllers
                 new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id",
                     "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+            
             return View(model.Project);
         }
 
@@ -320,7 +325,7 @@ namespace AtlasTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
-            if (Model != null)
+            if (model != null)
             {
                 try
                 {
@@ -364,6 +369,7 @@ namespace AtlasTracker.Controllers
                 new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRole.ProjectManager), companyId), "Id",
                     "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+            
             return View(model.Project);
         }
 
@@ -421,7 +427,7 @@ namespace AtlasTracker.Controllers
         private async Task<bool> ProjectExists(int id)
         {
             int companyId = User.Identity.GetCompanyId();
-            return (await _projectService.GetAllProjectsByCompany(companyId)).Any(p => p.Id == id);
+            return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(p => p.Id == id);
         }
 
     }
