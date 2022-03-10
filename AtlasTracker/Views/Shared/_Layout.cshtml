@@ -65,11 +65,11 @@
                                 @* <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a></li> *@
                             </ul>
                         </li>
-                        @* <li> *@
-                        @*     <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2"> *@
-                        @*         <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span> *@
-                        @*     </a> *@
-                        @* </li> *@
+                        <li>
+                            <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2">
+                                <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span>
+                            </a>
+                        </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="dropdown">
