@@ -1,5 +1,6 @@
 using AtlasTracker.Data;
 using AtlasTracker.Models;
+using AtlasTracker.Models.Enums;
 using AtlasTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -455,19 +456,19 @@ public class BTTicketService : IBTTicketService
 
             try
             {
-                if (role == Roles.Admin.ToString())
+                if (role == BTRole.Admin.ToString())
                 {
                     tickets = await GetAllTicketsByCompanyAsync(companyId);
                 }
-                else if (role == Roles.Developer.ToString())
+                else if (role == BTRole.Developer.ToString())
                 {
                     tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t => t.DeveloperUserId == userId).ToList();
                 }
-                else if (role == Roles.Submitter.ToString())
+                else if (role == BTRole.Submitter.ToString())
                 {
                     tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t => t.OwnerUserId == userId).ToList();
                 }
-                else if (role == Roles.ProjectManager.ToString())
+                else if (role == BTRole.ProjectManager.ToString())
                 {
                     tickets = await GetTicketsByUserIdAsync(userId, companyId);
                 }
@@ -491,22 +492,22 @@ public class BTTicketService : IBTTicketService
 
             try
             {
-                if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Admin.ToString()))
+                if (await _rolesService.IsUserInRoleAsync(btUser, BTRole.Admin.ToString()))
                 {
                     tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
                                                     .SelectMany(p => p.Tickets).ToList();
                 }
-                else if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Developer.ToString()))
+                else if (await _rolesService.IsUserInRoleAsync(btUser, BTRole.Developer.ToString()))
                 {
                     tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
                                                     .SelectMany(p => p.Tickets).Where(t => t.DeveloperUserId == userId).ToList();
                 }
-                else if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Submitter.ToString()))
+                else if (await _rolesService.IsUserInRoleAsync(btUser, BTRole.Submitter.ToString()))
                 {
                     tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
                                                     .SelectMany(t => t.Tickets).Where(t => t.OwnerUserId == userId).ToList();
                 }
-                else if (await _rolesService.IsUserInRoleAsync(btUser, Roles.ProjectManager.ToString()))
+                else if (await _rolesService.IsUserInRoleAsync(btUser, BTRole.ProjectManager.ToString()))
                 {
                     tickets = (await _projectService.GetUserProjectsAsync(userId)).SelectMany(t => t.Tickets).ToList();
                 }
