@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AtlasTracker.Data.Migrations
 {
-    public partial class _0001_SetMigration : Migration
+    public partial class _0001_InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -175,7 +175,7 @@ namespace AtlasTracker.Data.Migrations
                     EndDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ProjectPriorityId = table.Column<int>(type: "integer", nullable: false),
                     ImageFileName = table.Column<string>(type: "text", nullable: true),
-                    ImageFileData = table.Column<byte>(type: "smallint", nullable: true),
+                    ImageFileData = table.Column<byte[]>(type: "bytea", nullable: true),
                     ImageContentType = table.Column<string>(type: "text", nullable: true),
                     Archived = table.Column<bool>(type: "boolean", nullable: false)
                 },

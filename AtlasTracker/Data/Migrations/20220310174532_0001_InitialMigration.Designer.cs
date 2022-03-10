@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtlasTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220302210606_0001_SetMigration")]
-    partial class _0001_SetMigration
+    [Migration("20220310174532_0001_InitialMigration")]
+    partial class _0001_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -279,8 +279,8 @@ namespace AtlasTracker.Data.Migrations
                     b.Property<string>("ImageContentType")
                         .HasColumnType("text");
 
-                    b.Property<byte?>("ImageFileData")
-                        .HasColumnType("smallint");
+                    b.Property<byte[]>("ImageFileData")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("ImageFileName")
                         .HasColumnType("text");
