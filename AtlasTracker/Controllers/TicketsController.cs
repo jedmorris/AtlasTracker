@@ -10,6 +10,7 @@ using AtlasTracker.Data;
 using AtlasTracker.Models;
 using AtlasTracker.Models.Enums;
 using AtlasTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace AtlasTracker.Controllers
@@ -229,14 +230,17 @@ namespace AtlasTracker.Controllers
         }
 
         // POST: Tickets/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            _context.Tickets.Remove(ticket);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+            ticket.Archived = true;
+            await _ticketService.UpdateTicketAsync(ticket);
+            
+            
+            return RedirectToAction(nameof(AllTickets));
         }
 
         private bool TicketExists(int id)
