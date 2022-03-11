@@ -500,7 +500,7 @@ public class BTTicketService : IBTTicketService
                 else if (await _rolesService.IsUserInRoleAsync(btUser, BTRole.Developer.ToString()))
                 {
                     tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
-                                                    .SelectMany(p => p.Tickets).Where(t => t.DeveloperUserId == userId).ToList();
+                                                    .SelectMany(p => p.Tickets).Where(t => t.DeveloperUserId == userId || t.OwnerUserId == userId).ToList();
                 }
                 else if (await _rolesService.IsUserInRoleAsync(btUser, BTRole.Submitter.ToString()))
                 {
