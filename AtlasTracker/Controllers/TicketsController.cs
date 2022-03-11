@@ -8,19 +8,57 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AtlasTracker.Data;
 using AtlasTracker.Models;
+using AtlasTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace AtlasTracker.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public TicketsController(ApplicationDbContext context)
+        private readonly UserManager<BTUser> _userManager;
+        private readonly IBTProjectService _projectService;
+        private readonly IBTLookupService _lookupService;
+        private readonly IBTCompanyInfoService _companyInfoService;
+        private readonly IBTFileService _fileService;
+        
+        public TicketsController(ApplicationDbContext context,
+            UserManager<BTUser> userManager,
+            IBTLookupService lookupService,
+            IBTProjectService projectService, IBTFileService fileService, IBTCompanyInfoService companyInfoService)
         {
             _context = context;
+            _userManager = userManager;
+            _lookupService = lookupService;
+            _projectService = projectService;
+            _fileService = fileService;
+            _companyInfoService = companyInfoService;
         }
 
         // GET: Tickets
+
+        // GET: Unassigned Tickets
+        
+        // GET: My Tickets
+        
+        // GET: Archived Tickets
+        
+        // GET: All Tickets
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
@@ -52,7 +90,9 @@ namespace AtlasTracker.Controllers
         }
 
         // GET: Tickets/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
+        
+        BTUser btUser = await 
         {
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
@@ -137,19 +177,21 @@ namespace AtlasTracker.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                
+                // TODO: Add Ticket History
+                
+                
+                return RedirectToAction(nameof(AllTickets));
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
             ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
             return View(ticket);
         }
 
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Tickets/Archive/5
+        public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
             {
@@ -172,8 +214,8 @@ namespace AtlasTracker.Controllers
             return View(ticket);
         }
 
-        // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Tickets/Archive/5
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -187,5 +229,15 @@ namespace AtlasTracker.Controllers
         {
             return _context.Tickets.Any(e => e.Id == id);
         }
+        
+        
+        
+        // GET: Tickets/Restore
+        
+        // POST: Tickets/Restore
+        
+        
+        
+        
     }
 }
