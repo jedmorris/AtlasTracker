@@ -15,24 +15,29 @@ namespace AtlasTracker.Controllers
 {
     public class TicketsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        // private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTCompanyInfoService _companyInfoService;
         private readonly IBTFileService _fileService;
+        private readonly IBTTicketService _ticketService;
         
         public TicketsController(ApplicationDbContext context,
             UserManager<BTUser> userManager,
             IBTLookupService lookupService,
-            IBTProjectService projectService, IBTFileService fileService, IBTCompanyInfoService companyInfoService)
+            IBTProjectService projectService, 
+            IBTFileService fileService, 
+            IBTCompanyInfoService companyInfoService, 
+            IBTTicketService ticketService)
         {
-            _context = context;
+            // _context = context;
             _userManager = userManager;
             _lookupService = lookupService;
             _projectService = projectService;
             _fileService = fileService;
             _companyInfoService = companyInfoService;
+            _ticketService = ticketService;
         }
 
         // GET: Tickets
@@ -91,8 +96,9 @@ namespace AtlasTracker.Controllers
 
         // GET: Tickets/Create
         public async Task<IActionResult> Create()
+
         
-        BTUser btUser = await 
+        
         {
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
@@ -133,17 +139,17 @@ namespace AtlasTracker.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+            
             if (ticket == null)
             {
                 return NotFound();
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            
+            
+            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
 
