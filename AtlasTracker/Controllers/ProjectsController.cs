@@ -181,9 +181,11 @@ namespace AtlasTracker.Controllers
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
                 
-            }
                 // goto project details
                 return RedirectToAction("Details", "Projects", new {id = model.Project?.Id});
+            }
+
+            return RedirectToAction(nameof(AssignMembers), new {id = model.Project.Id});
         }
 
 

@@ -16,7 +16,7 @@
                 </div>
                 <div class="card-body">
                     <form method="post" asp-action="AssignMembers" asp-controller="Projects">
-                        <input hidden asp-for="Project.Id" />
+                        <input hidden asp-for="Project!.Id" />
                         <div class="col-12 mb-3">
                             <div class="form-group">
                                 <select required asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.UsersList" multiple="multiple"></select>
