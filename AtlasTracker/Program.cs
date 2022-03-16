@@ -6,6 +6,7 @@ using AtlasTracker.Services;
 using AtlasTracker.Services.Factories;
 using AtlasTracker.Services.Interfaces;
 using Instructor_AtlasTracker.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,8 +37,7 @@ builder.Services.AddScoped<IBTNotificationService, BTNotificationService>();
 builder.Services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
 builder.Services.AddScoped<IPostgresDateService, PostgresDateService>();
 
-
-
+builder.Services.AddScoped<IEmailSender, BTEmailService>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 

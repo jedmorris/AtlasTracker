@@ -2,15 +2,15 @@ using AtlasTracker.Models;
 using AtlasTracker.Services.Interfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace AtlasTracker.Services;
 
-public class BTEmailService : IBTEmailService
+public class BTEmailService : IBTEmailService, IEmailSender
 {
     private readonly MailSettings _mailSettings;
-
 
     public BTEmailService(IOptions<MailSettings> mailSettings)
     {
