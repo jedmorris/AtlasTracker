@@ -32,6 +32,10 @@ builder.Services.AddScoped<IBTTicketService, BTTicketService>();
 builder.Services.AddScoped<IBTLookupService, BTLookupService>();
 builder.Services.AddScoped<IBTFileService, BTFileService>();
 builder.Services.AddScoped<IBTRolesService, BTRolesService>();
+builder.Services.AddScoped<IBTNotificationService, BTNotificationService>();
+builder.Services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
+builder.Services.AddScoped<IPostgresDateService, PostgresDateService>();
+
 
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
