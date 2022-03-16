@@ -1,5 +1,6 @@
 using AtlasTracker.Models;
 using AtlasTracker.Services.Interfaces;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
