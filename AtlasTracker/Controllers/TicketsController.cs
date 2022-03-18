@@ -89,10 +89,10 @@ namespace AtlasTracker.Controllers
         }
 
         // GET: Archived Ticket
-        public async Task<IActionResult> ArchivedTickets()
-        {
-            return View();
-        }
+        // public async Task<IActionResult> ArchivedTickets()
+        // {
+        //     return View();
+        // }
 
         // GET: Unassigned Tickets
         [Authorize(Roles = "Admin, ProjectManager")]
@@ -125,10 +125,10 @@ namespace AtlasTracker.Controllers
 
         [Authorize(Roles = "Admin, ProjectManager")]
         [HttpGet]
-        public async Task<IActionResult> AssignDeveloper(int id)
-        {
-            return View();
-        }
+        // public async Task<IActionResult> AssignDeveloper(int id)
+        // {
+        //     return View();
+        // }
 
 
         [Authorize(Roles = "Admin, ProjectManager")]
@@ -139,7 +139,7 @@ namespace AtlasTracker.Controllers
             if (model.DeveloperId != null)
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
-
+        
                 try
                 {
                     await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
@@ -152,9 +152,9 @@ namespace AtlasTracker.Controllers
                 //New Ticket
                 Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
                 await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
-
+        
             }
-        }
+        // }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

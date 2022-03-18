@@ -29,4 +29,47 @@
       <Content Remove="Views\Shared\_LayoutOLD.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\NotificationTypes\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\NotificationTypes\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\NotificationTypes\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\NotificationTypes\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\NotificationTypes\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProjectPriorities\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProjectPriorities\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProjectPriorities\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProjectPriorities\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProjectPriorities\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketAttachments\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketAttachments\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketAttachments\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketAttachments\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketAttachments\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketComments\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketComments\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketComments\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketComments\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketComments\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketHistory\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketHistory\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketHistory\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketHistory\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketHistory\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketPriorities\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketPriorities\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketPriorities\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketPriorities\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketPriorities\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketStatus\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketStatus\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketStatus\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketStatus\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketStatus\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketType\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketType\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketType\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketType\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TicketType\Index.cshtml" />
+    </ItemGroup>
+
 </Project>
