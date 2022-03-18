@@ -254,6 +254,7 @@ namespace AtlasTracker.Controllers
         public async Task<IActionResult> Create()
         {
             BTUser btUser = await _userManager.GetUserAsync(User);
+            
 
             if (User.IsInRole(nameof(BTRole.Admin)))
             {
