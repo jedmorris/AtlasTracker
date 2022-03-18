@@ -340,12 +340,10 @@ namespace AtlasTracker.Controllers
             }
 
 
-            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id",
-                "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name",
-                ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name",
-                ticket.TicketTypeId);
+            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name", ticket.TicketTypeId);
+            
             return View(ticket);
         }
 
