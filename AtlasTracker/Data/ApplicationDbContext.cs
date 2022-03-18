@@ -13,7 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<BTUser>
 
     public DbSet<Company> Companies { get; set; } = default!;
     public DbSet<Invite> Invites { get; set; } = default!;
-    public DbSet<Project?> Projects { get; set; } = default!;
+    public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<Ticket> Tickets { get; set; } = default!;
     public DbSet<Notification> Notifications { get; set; } = default!;
     public DbSet<NotificationType> NotificationTypes { get; set; } = default!;

@@ -54,9 +54,9 @@
                                 <i class="fs-5 bi-file-earmark-font"></i><span class="ms-1 d-none d-sm-inline">Tickets</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                <li>
-                                    <a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a>
-                                </li>
+                                @* <li> *@
+                                @*     <a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a> *@
+                                @* </li> *@
                                 <li>
                                     <a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">Index</a>
                                 </li>
@@ -65,11 +65,11 @@
                                 @* <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a></li> *@
                             </ul>
                         </li>
-                        <li>
-                            <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2">
-                                <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span>
-                            </a>
-                        </li>
+                        @* <li> *@
+                        @*     <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2"> *@
+                        @*         <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span> *@
+                        @*     </a> *@
+                        @* </li> *@
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="dropdown">
