@@ -92,7 +92,11 @@ namespace AtlasTracker.Controllers
         // GET: Archived Ticket
         public async Task<IActionResult> ArchivedTickets()
         {
-            return View();
+            int companyId = User.Identity.GetCompanyId();
+
+            List<Ticket> tickets = await _ticketService.GetArchivedTicketsAsync(companyId);
+            
+            return View(tickets);
         }
 
         // GET: Unassigned Tickets
