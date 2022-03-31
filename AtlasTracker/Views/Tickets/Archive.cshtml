@@ -1,8 +1,164 @@
-@model AtlasTracker.Models.Ticket?
+@model AtlasTracker.Models.Ticket
 
 @{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
+    ViewData["Title"] = "Archive";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>title</h2>
+<h1>Archive</h1>
+
+<h3>Are You Sure You Want To Archive This?</h3>    
+
+<div>
+    <h4>Ticket</h4>
+    <hr/>
+    <div class="row">
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Created)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Updated)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Archived)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ArchivedByProject)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.TicketPriority)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.TicketType)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.TicketStatus)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OwnerUser)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.DeveloperUser)
+        </dt>
+        <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Title)            
+        </dd>
+        
+    </div>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Created)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Archived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ArchivedByProject)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Project.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketType.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnerUser.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeveloperUser.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

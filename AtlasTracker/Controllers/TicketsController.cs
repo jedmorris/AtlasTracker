@@ -63,10 +63,11 @@ namespace AtlasTracker.Controllers
         // GET: My Tickets
         public async Task<IActionResult> MyTickets()
         {
-            string userId = _userManager.GetUserId(User);
-            int companyId = User.Identity.GetCompanyId();
+            // string userId = _userManager.GetUserId(User);
+            // int companyId = User.Identity.GetCompanyId();
+            BTUser btUser = await _userManager.GetUserAsync(User);
 
-            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(userId, companyId);
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(btUser.Id, btUser.CompanyId);
 
             return View(tickets);
         }
@@ -365,11 +366,11 @@ namespace AtlasTracker.Controllers
             if (ModelState.IsValid)
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
-                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                // Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
 
                 try
                 {
-                    ticket.Created = _postgresDateService.FormatDate(ticket.Created.DateTime);
+                    // ticket.Created = _postgresDateService.FormatDate(ticket.Created.DateTime);
                     ticket.Updated = DateTime.UtcNow;
                     await _ticketService.UpdateTicketAsync(ticket);
 
@@ -381,7 +382,7 @@ namespace AtlasTracker.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketExists(ticket.Id))
+                    if (!await TicketExists(ticket.Id))
                     {
                         return NotFound();
                     }
@@ -392,14 +393,13 @@ namespace AtlasTracker.Controllers
                 }
 
                 // TODO: Add Ticket History
-                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.id);
-                await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+                // Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.id);
+                // await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
 
                 return RedirectToAction(nameof(AllTickets));
             }
 
-            ViewData["TicketPriorityId"] =
-                new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
 
@@ -414,14 +414,8 @@ namespace AtlasTracker.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.OwnerUser)
-                .Include(t => t.Project)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+            
             if (ticket == null)
             {
                 return NotFound();
